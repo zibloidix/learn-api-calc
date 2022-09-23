@@ -2,9 +2,13 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
+	"path"
+	"strings"
 
+	"github.com/gomarkdown/markdown"
 	"github.com/google/uuid"
 )
 
@@ -89,6 +93,7 @@ func main() {
 	http.HandleFunc("/div", methodHandleFunc)
 	http.HandleFunc("/errors", errorsHandleFunc)
 	http.HandleFunc("/tokens", tokensHandleFunc)
+	http.HandleFunc("/lessons/", lessonsHandleFunc)
 
 	http.ListenAndServe(":"+port, nil)
 }
@@ -247,4 +252,22 @@ func sendErrorResponce(w http.ResponseWriter, errorCode string, status int) {
 	err.ErrorID = uuid.New().String()
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(err)
+}
+
+func lessonsHandleFunc(w http.ResponseWriter, req *http.Request) {
+	tmpFile, errTmpFile := os.ReadFile(path.Join("html", "base-template.html"))
+	lesID := strings.TrimPrefix(req.URL.Path, "/lessons/")
+	lesFile, errLesFile := os.ReadFile(path.Join("html", lesID+".md"))
+	if errTmpFile != nil || errLesFile != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, "404 page not found")
+	} else {
+		w.Header().Set("Content-Type", "text/html")
+		lesOut := string(markdown.ToHTML(lesFile, nil, nil))
+		html := string(tmpFile)
+		html = strings.Replace(html, "{{body}}", lesOut, 1)
+		html = strings.Replace(html, "{{title}}", "Урок "+lesID, 1)
+
+		fmt.Fprint(w, html)
+	}
 }

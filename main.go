@@ -32,7 +32,7 @@ type ErrorsResponseType struct {
 }
 
 type TokensResponseType struct {
-	Tokens []string `json:"tags"`
+	Tokens []string `json:"tokens"`
 }
 
 type OperationRequestType struct {
@@ -94,6 +94,9 @@ func main() {
 	http.HandleFunc("/errors", errorsHandleFunc)
 	http.HandleFunc("/tokens", tokensHandleFunc)
 	http.HandleFunc("/lessons/", lessonsHandleFunc)
+
+	fs := http.FileServer(http.Dir("./swagger"))
+	http.Handle("/swagger/", http.StripPrefix("/swagger/", fs))
 
 	http.ListenAndServe(":"+port, nil)
 }

@@ -1,0 +1,428 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Calculate API",
+    "description": "Учебный сервис калькулятор",
+    "contact": {
+      "email": "zibloidix@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://learn-api.ru/calc",
+      "description": "Сервис за nginx"
+    },
+    {
+      "url": "http://learn-api.ru:3001/",
+      "description": "Сервис доступный по порту"
+    },
+    {
+      "url": "http://localhost:3001/",
+      "description": "Сервис для разработки"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Авторизация пользователей"
+    },
+    {
+      "name": "Info",
+      "description": "Дополнительная информация"
+    },
+    {
+      "name": "Calc",
+      "description": "Операции вычисления"
+    }
+  ],
+  "paths": {
+    "/auth": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Получение X-Auth-Token",
+        "description": "Позволяет получить X-Auth-Token по логину и паролю\n",
+        "operationId": "auth",
+        "requestBody": {
+          "description": "Тело запроса для получения X-Auth-Token",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Успешний ответ содержит X-Auth-Token в поле token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Ошибки AUTH_EMPTY_FIELDS, AUTH_WRONG_VALUES",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tokens": {
+      "get": {
+        "tags": [
+          "Info"
+        ],
+        "summary": "Получение списка действующих X-Auth-Token",
+        "description": "Система вернет список токенов, которые можно использовать в заголовке ```X-Auth-Token```. Список может содержат максимум 50 токенов. Токен попадает в список после авторизации методом ```/auth```\n",
+        "responses": {
+          "200": {
+            "description": "Успешний ответ. Если токенов нет, то поле ```tokens``` равно **null**\n",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokensResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/errors": {
+      "get": {
+        "tags": [
+          "Info"
+        ],
+        "summary": "Получение списка ошибок, возращаемых API",
+        "description": "Adds an item to the system",
+        "responses": {
+          "200": {
+            "description": "item created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokensResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/add": {
+      "post": {
+        "tags": [
+          "Calc"
+        ],
+        "summary": "Операция сложения",
+        "description": "Операция сложения\n",
+        "operationId": "add",
+        "requestBody": {
+          "description": "Тело запроса операции",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalcRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ответ содержит результат вычисления",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalcResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Ошибки AUTH_EMPTY_FIELDS, AUTH_WRONG_VALUES",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-Auth-Token": []
+          }
+        ]
+      }
+    },
+    "/sub": {
+      "post": {
+        "tags": [
+          "Calc"
+        ],
+        "summary": "Операция вычитания",
+        "description": "Операция вычитания\n",
+        "operationId": "sub",
+        "requestBody": {
+          "description": "Тело запроса операции",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalcRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ответ содержит результат вычисления",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalcResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Ошибки AUTH_EMPTY_FIELDS, AUTH_WRONG_VALUES",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-Auth-Token": []
+          }
+        ]
+      }
+    },
+    "/mul": {
+      "post": {
+        "tags": [
+          "Calc"
+        ],
+        "summary": "Операция умножения",
+        "description": "Операция умножения\n",
+        "operationId": "mul",
+        "requestBody": {
+          "description": "Тело запроса операции",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalcRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ответ содержит результат вычисления",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalcResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Ошибки AUTH_EMPTY_FIELDS, AUTH_WRONG_VALUES",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-Auth-Token": []
+          }
+        ]
+      }
+    },
+    "/div": {
+      "post": {
+        "tags": [
+          "Calc"
+        ],
+        "summary": "Операция деления",
+        "description": "Операция деления. Результат деления содержит целое число. В полях ```\"a\"``` и ```\"b\"``` не должно быть указано ноль\n",
+        "operationId": "div",
+        "requestBody": {
+          "description": "Тело запроса операции",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalcRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ответ содержит результат вычисления",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalcResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Ошибки AUTH_EMPTY_FIELDS, AUTH_WRONG_VALUES",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "X-Auth-Token": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CalcRequest": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "integer",
+            "example": 2
+          },
+          "b": {
+            "type": "integer",
+            "example": 2
+          }
+        }
+      },
+      "CalcResponse": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "integer",
+            "example": 2
+          },
+          "b": {
+            "type": "integer",
+            "example": 2
+          },
+          "result": {
+            "type": "integer",
+            "example": 4
+          },
+          "operation": {
+            "type": "string",
+            "enum": [
+              "add",
+              "sub",
+              "mul",
+              "div"
+            ]
+          }
+        }
+      },
+      "TokensResponse": {
+        "type": "object",
+        "properties": {
+          "tokens": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "example": "594b7c25-7734-4244-959b-fa05bc1e13ba"
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "errorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": "string",
+            "enum": [
+              "ATTR_EMPTY",
+              "ATTR_ZERO",
+              "AUTH_EMPTY_FIELDS",
+              "AUTH_WRONG_VALUES",
+              "TOKEN_EMPTY",
+              "TOKEN_IS_NOT_VALID",
+              "TOKEN_NOT_FOUND",
+              "WRONG_REQUEST"
+            ]
+          }
+        }
+      },
+      "AuthRequest": {
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": "string",
+            "example": "user"
+          },
+          "password": {
+            "type": "string",
+            "example": "secret"
+          }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "format": "uuid",
+            "example": "594b7c25-7734-4244-959b-fa05bc1e13ba"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "X-Auth-Token": {
+        "type": "apiKey",
+        "name": "X-Auth-Token",
+        "in": "header"
+      }
+    }
+  }
+}

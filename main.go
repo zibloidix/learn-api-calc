@@ -48,7 +48,9 @@ type OperationResponseType struct {
 }
 
 var ErrorsMap = make(map[string]ErrorType)
-var Tokens []string
+var Tokens = []string{
+	"e5ab6024-330b-43c9-b5d2-984524a90790",
+}
 
 func main() {
 	port := os.Getenv("PORT")
